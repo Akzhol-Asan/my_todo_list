@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:home_work_1/helpers/format_datetime.dart';
 import '../models/task.dart';
 
 class TaskCard extends StatefulWidget {
@@ -12,16 +13,26 @@ class TaskCard extends StatefulWidget {
 
 class _TaskCardState extends State<TaskCard> {
   bool isDone = false;
+  String? doneTime;
+  bool deadlineIsFailed = false;
 
   void taskIsDone() {
     setState(() {
       isDone = !isDone;
+      if (isDone) {
+        doneTime = formatDateTime(DateTime.now());
+        deadlineIsFailed = DateTime.now().isAfter(widget.task.dateTime);
+      } else {
+        doneTime = null;
+        deadlineIsFailed = false;
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final titleSmallStyle = theme.textTheme.titleSmall!;
 
     return SizedBox(
       width: double.infinity,
@@ -31,21 +42,45 @@ class _TaskCardState extends State<TaskCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.task.title,
-                  style: theme.textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    decoration: isDone
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                    color: isDone ? Colors.grey : Colors.black,
-                  )),
+              //Task title
+              Text(
+                widget.task.title,
+                style: theme.textTheme.bodyLarge!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  decoration:
+                      isDone ? TextDecoration.lineThrough : TextDecoration.none,
+                  color: isDone ? Colors.grey : Colors.black,
+                ),
+              ),
+              //Task description
               Text(
                 widget.task.description,
                 style: theme.textTheme.bodyMedium!.copyWith(
                   color: theme.colorScheme.primary,
                 ),
               ),
+              SizedBox(height: 4),
+              //Deadline
+              Text(
+                'Deadline: ${formatDateTime(widget.task.dateTime)}',
+                style:
+                    titleSmallStyle.copyWith(color: theme.colorScheme.tertiary),
+              ),
+              //DoneTime
+              Text(
+                isDone ? 'Done time: $doneTime' : 'Done time:',
+                style: titleSmallStyle.copyWith(
+                    color: isDone
+                        ? (deadlineIsFailed
+                            ? theme.colorScheme.error
+                            : Colors.green.shade800)
+                        : theme.colorScheme.tertiary,
+                    decoration: deadlineIsFailed
+                        ? TextDecoration.underline
+                        : TextDecoration.none),
+              ),
               SizedBox(height: 8),
+              //Done & Delete buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

@@ -16,19 +16,23 @@ class _AppState extends State<App> {
     Task(
         title: 'Task example #1',
         isDone: false,
-        description: 'task description'),
+        description: 'task description',
+        dateTime: DateTime.now()),
     Task(
         title: 'Task example #2',
         isDone: false,
-        description: 'task description'),
+        description: 'task description',
+        dateTime: DateTime(DateTime.now().year + 5)),
     Task(
         title: 'Task example #3',
         isDone: false,
-        description: 'task description'),
+        description: 'task description',
+        dateTime: DateTime.now()),
     Task(
         title: 'Task example #4',
         isDone: false,
-        description: 'task description'),
+        description: 'task description',
+        dateTime: DateTime.now()),
   ];
 
   void addTask(Task newTask) {

@@ -14,10 +14,12 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Column(
-        children: widget.tasks.map((task) => TaskCard(task: task)).toList(),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Column(
+          children: widget.tasks.map((task) => TaskCard(task: task)).toList(),
+        ),
       ),
     );
   }
