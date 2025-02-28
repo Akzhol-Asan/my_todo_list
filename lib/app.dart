@@ -17,22 +17,26 @@ class _AppState extends State<App> {
         title: 'Task example #1',
         isDone: false,
         description: 'task description',
-        dateTime: DateTime.now()),
+        dateTime: DateTime.now(),
+        categoryId: 'work'),
     Task(
         title: 'Task example #2',
         isDone: false,
         description: 'task description',
-        dateTime: DateTime(DateTime.now().year + 5)),
+        dateTime: DateTime(DateTime.now().year + 5),
+        categoryId: 'personal'),
     Task(
         title: 'Task example #3',
         isDone: false,
         description: 'task description',
-        dateTime: DateTime.now()),
+        dateTime: DateTime.now(),
+        categoryId: 'school'),
     Task(
         title: 'Task example #4',
         isDone: false,
         description: 'task description',
-        dateTime: DateTime.now()),
+        dateTime: DateTime.now(),
+        categoryId: 'event'),
   ];
 
   void addTask(Task newTask) {
@@ -43,10 +47,13 @@ class _AppState extends State<App> {
 
   void openAddTaskSheet() {
     showModalBottomSheet(
-        context: context,
-        builder: (ctx) => NewTask(
-              onTaskCreated: addTask,
-            ));
+      isScrollControlled: true,
+      useSafeArea: true,
+      context: context,
+      builder: (ctx) => NewTask(
+        onTaskCreated: addTask,
+      ),
+    );
   }
 
   @override

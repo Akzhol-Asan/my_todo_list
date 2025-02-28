@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:home_work_1/data/categories_data.dart';
 import 'package:home_work_1/helpers/format_datetime.dart';
 import 'package:home_work_1/models/task.dart';
 
@@ -19,6 +20,7 @@ class _NewTaskState extends State<NewTask> {
   var description = '';
   var selectedDate = DateTime.now();
   var selectedTimeOfDay = TimeOfDay.now();
+  String? selectedCategory;
 
   final dateController = TextEditingController();
   final timeController = TextEditingController();
@@ -35,6 +37,9 @@ class _NewTaskState extends State<NewTask> {
   }
 
   void onSaved() {
+    if (selectedCategory == null) {
+      return;
+    }
     final dateTime = DateTime(
       selectedDate.year,
       selectedDate.month,
@@ -47,6 +52,7 @@ class _NewTaskState extends State<NewTask> {
       description: description,
       isDone: false,
       dateTime: dateTime,
+      categoryId: selectedCategory!,
     );
     widget.onTaskCreated(newTask);
     Navigator.pop(context);
@@ -82,69 +88,88 @@ class _NewTaskState extends State<NewTask> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 300,
-      padding: EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: Column(
-          children: [
-            //Task title
-            Expanded(
+    final theme = Theme.of(context);
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, bottomInset + 16),
+      child: Column(
+        children: [
+          //Task title
+          SizedBox(
+              child: TextField(
+            onChanged: (value) => setState(() => title = value),
+            decoration: InputDecoration(label: Text('Task')),
+          )),
+          SizedBox(width: 8),
+          //Task description
+          SizedBox(
+              child: TextField(
+            onChanged: (value) => setState(() => description = value),
+            decoration: InputDecoration(label: Text('Description')),
+          )),
+          SizedBox(height: 10),
+          //Deadline Date & time
+          Row(
+            children: [
+              Expanded(
                 child: TextField(
-              onChanged: (value) => setState(() => title = value),
-              decoration: InputDecoration(label: Text('Task')),
-            )),
-            SizedBox(width: 8),
-            //Task description
-            Expanded(
-                child: TextField(
-              onChanged: (value) => setState(() => description = value),
-              decoration: InputDecoration(label: Text('Description')),
-            )),
-            SizedBox(height: 10),
-            //Deadline Date & time
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onTap: onDateTap,
-                    readOnly: true,
-                    controller: dateController,
-                    decoration: InputDecoration(
-                      label: Text('Deadline Date'),
-                    ),
+                  onTap: onDateTap,
+                  readOnly: true,
+                  controller: dateController,
+                  decoration: InputDecoration(
+                    label: Text('Deadline Date'),
                   ),
                 ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: TextField(
-                    onTap: onTimeTap,
-                    readOnly: true,
-                    controller: timeController,
-                    decoration: InputDecoration(
-                      label: Text('Deadline Time'),
-                    ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: TextField(
+                  onTap: onTimeTap,
+                  readOnly: true,
+                  controller: timeController,
+                  decoration: InputDecoration(
+                    label: Text('Deadline Time'),
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: 22),
-            //Cancel & Save buttons
-            Row(
-              children: [
-                Expanded(
-                    child: TextButton(
-                        onPressed: onCanceled, child: Text('Cancel'))),
-                SizedBox(width: 8),
-                Expanded(
-                    child: ElevatedButton(
-                        onPressed: onSaved, child: Text('Save'))),
-              ],
-            )
-          ],
-        ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          //Categories
+          DropdownMenu(
+            expandedInsets: EdgeInsets.zero,
+            label: Text('Categories'),
+            inputDecorationTheme: theme.inputDecorationTheme,
+            onSelected: (value) => setState(() => selectedCategory = value),
+            dropdownMenuEntries: categories
+                .map(
+                  (category) => DropdownMenuEntry(
+                    value: category.id,
+                    leadingIcon: Icon(category.icon, color: category.iconColor),
+                    label: '',
+                    labelWidget: Text(
+                      ' ${category.title}',
+                      style: TextStyle(color: category.iconColor),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          SizedBox(height: 22),
+          //Cancel & Save buttons
+          Row(
+            children: [
+              Expanded(
+                  child:
+                      TextButton(onPressed: onCanceled, child: Text('Cancel'))),
+              SizedBox(width: 8),
+              Expanded(
+                  child:
+                      ElevatedButton(onPressed: onSaved, child: Text('Save'))),
+            ],
+          )
+        ],
       ),
     );
   }
