@@ -32,12 +32,19 @@ class _NewTaskState extends State<NewTask> {
     timeController.text = formatTime(selectedTimeOfDay);
   }
 
+  @override
+  void dispose() {
+    dateController.dispose();
+    timeController.dispose();
+    super.dispose();
+  }
+
   void onCanceled() {
     Navigator.pop(context);
   }
 
   void onSaved() {
-    if (selectedCategory == null) {
+    if (isTaskInvalid()) {
       return;
     }
     final dateTime = DateTime(
@@ -48,8 +55,8 @@ class _NewTaskState extends State<NewTask> {
       selectedTimeOfDay.minute,
     );
     final newTask = Task(
-      title: title,
-      description: description,
+      title: title.trim(),
+      description: description.trim(),
       isDone: false,
       dateTime: dateTime,
       categoryId: selectedCategory!,
@@ -84,6 +91,12 @@ class _NewTaskState extends State<NewTask> {
       selectedTimeOfDay = pickedTime;
       timeController.text = formatTime(pickedTime);
     }
+  }
+
+  bool isTaskInvalid() {
+    return title.trim().isEmpty ||
+        description.trim().isEmpty ||
+        selectedCategory == null;
   }
 
   @override
@@ -139,7 +152,7 @@ class _NewTaskState extends State<NewTask> {
           //Categories
           DropdownMenu(
             expandedInsets: EdgeInsets.zero,
-            label: Text('Categories'),
+            label: Text('Category'),
             inputDecorationTheme: theme.inputDecorationTheme,
             onSelected: (value) => setState(() => selectedCategory = value),
             dropdownMenuEntries: categories
@@ -147,7 +160,7 @@ class _NewTaskState extends State<NewTask> {
                   (category) => DropdownMenuEntry(
                     value: category.id,
                     leadingIcon: Icon(category.icon, color: category.iconColor),
-                    label: '',
+                    label: category.title,
                     labelWidget: Text(
                       ' ${category.title}',
                       style: TextStyle(color: category.iconColor),
@@ -165,10 +178,11 @@ class _NewTaskState extends State<NewTask> {
                       TextButton(onPressed: onCanceled, child: Text('Cancel'))),
               SizedBox(width: 8),
               Expanded(
-                  child:
-                      ElevatedButton(onPressed: onSaved, child: Text('Save'))),
+                  child: ElevatedButton(
+                      onPressed: isTaskInvalid() ? null : onSaved,
+                      child: Text('Save'))),
             ],
-          )
+          ),
         ],
       ),
     );
