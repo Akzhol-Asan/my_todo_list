@@ -29,7 +29,7 @@ class TasksScreen extends StatelessWidget {
                 .toList();
 
     return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 30),
+      padding: const EdgeInsets.only(left: 8, right: 8),
       child: ListView.builder(
         itemCount: filteredTasks.length,
         itemBuilder: (ctx, index) {

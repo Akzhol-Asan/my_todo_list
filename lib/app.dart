@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:home_work_1/models/task_category.dart';
+import 'package:home_work_1/screens/statistics_screen.dart';
 import 'package:home_work_1/screens/tasks_screen.dart';
 import 'package:home_work_1/widgets/task_form.dart';
 
 import 'data/categories_data.dart';
+import 'models/destination.dart';
 import 'models/task.dart';
 
 class App extends StatefulWidget {
@@ -59,6 +61,8 @@ class _AppState extends State<App> {
         dateTime: null,
         categoryId: 'event'),
   ];
+  TaskCategory? _selectedCategory;
+  int currentScreenIndex = 0;
 
   void addTask(Task newTask) {
     setState(() {
@@ -128,10 +132,54 @@ class _AppState extends State<App> {
     });
   }
 
-  TaskCategory? _selectedCategory;
+  void updateCurrentPageIndex(int newIndex) {
+    setState(() {
+      currentScreenIndex = newIndex;
+    });
+  }
+
+  List<Destination> get destinations {
+    return [
+      Destination(
+        screenTitle: Text('Tasks'),
+        navLabel: 'Tasks',
+        navIcon: Icons.receipt_long_outlined,
+        navSelectedIcon: Icons.receipt_long,
+        appBarActions: [
+          Text(
+            _selectedCategory != null ? _selectedCategory!.title : '',
+            style: TextStyle(color: Colors.blue),
+          ),
+          IconButton(
+            onPressed: openFilter,
+            icon: Icon(Icons.filter_list,
+                color: _selectedCategory != null ? Colors.blue : Colors.black),
+          ),
+          IconButton(
+            onPressed: openAddTaskSheet,
+            icon: Icon(Icons.add),
+          ),
+        ],
+        screen: TasksScreen(
+          tasks: tasks,
+          selectedCategory: _selectedCategory,
+          onTaskDeleted: deleteTask,
+          onTaskEdited: openEditTaskSheet,
+        ),
+      ),
+      Destination(
+        screenTitle: Text('Statistics'),
+        navLabel: 'Statistics',
+        navIcon: Icons.pie_chart_outline,
+        navSelectedIcon: Icons.pie_chart,
+        screen: StatisticsScreen(tasks: tasks),
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    //Deadline sort
     tasks.sort((a, b) {
       if (a.dateTime != null && b.dateTime == null) {
         return -1;
@@ -144,28 +192,24 @@ class _AppState extends State<App> {
       }
     });
 
+    final destination = destinations[currentScreenIndex];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tasks'),
-        actions: [
-          //Categories filter Text
-          Text(_selectedCategory != null ? _selectedCategory!.title : '',
-              style: TextStyle(color: Colors.blue)),
-          //Categories filter button
-          IconButton(
-              onPressed: openFilter,
-              icon: Icon(Icons.filter_list,
-                  color:
-                      _selectedCategory != null ? Colors.blue : Colors.black)),
-          //Add new task button
-          IconButton(onPressed: openAddTaskSheet, icon: Icon(Icons.add))
-        ],
+        title: destination.screenTitle,
+        actions: destination.appBarActions,
       ),
-      body: TasksScreen(
-          tasks: tasks,
-          selectedCategory: _selectedCategory,
-          onTaskDeleted: deleteTask,
-          onTaskEdited: openEditTaskSheet),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: currentScreenIndex,
+        onDestinationSelected: updateCurrentPageIndex,
+        destinations: destinations
+            .map((destination) => NavigationDestination(
+                icon: Icon(destination.navIcon),
+                selectedIcon: Icon(destination.navSelectedIcon),
+                label: destination.navLabel))
+            .toList(),
+      ),
+      body: destination.screen,
     );
   }
 }

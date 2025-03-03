@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:home_work_1/helpers/format_datetime.dart';
 import '../models/task.dart';
+import 'category_display.dart';
 
 class TaskCard extends StatefulWidget {
   final Task task;
 
-  const TaskCard({super.key, required this.task});
+  const TaskCard({
+    super.key,
+    required this.task,
+  });
 
   @override
   State<TaskCard> createState() => _TaskCardState();
@@ -37,6 +41,7 @@ class _TaskCardState extends State<TaskCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final titleSmallStyle = theme.textTheme.titleSmall!;
+    final category = widget.task.category;
 
     return SizedBox(
       width: double.infinity,
@@ -83,7 +88,6 @@ class _TaskCardState extends State<TaskCard> {
                   ),
                 ],
               ),
-              //Task description
               SizedBox(height: 4),
               // Deadline
               Text(
@@ -93,7 +97,6 @@ class _TaskCardState extends State<TaskCard> {
                 style:
                     titleSmallStyle.copyWith(color: theme.colorScheme.tertiary),
               ),
-
               //DoneTime
               Text(
                 isDone ? 'Done time: $doneTime' : 'In Progress...',
@@ -110,25 +113,13 @@ class _TaskCardState extends State<TaskCard> {
               SizedBox(height: 10),
               //Task category
               Container(
-                  padding:
-                      EdgeInsets.only(top: 2, bottom: 2, right: 6, left: 6),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: widget.task.category.iconColor,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        widget.task.category.icon,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: 4),
-                      Text(widget.task.category.title,
-                          style: titleSmallStyle.copyWith(color: Colors.white))
-                    ],
-                  )),
+                padding: EdgeInsets.only(top: 2, bottom: 2, right: 6, left: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: category.iconColor,
+                ),
+                child: CategoryDisplay(category: category),
+              ),
             ],
           ),
         ),
