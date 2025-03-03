@@ -1,34 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:home_work_1/models/task_category.dart';
 import 'package:home_work_1/widgets/task_card.dart';
 import '../models/task.dart';
 
-class TasksScreen extends StatefulWidget {
+class TasksScreen extends StatelessWidget {
   final List<Task> tasks;
   final TaskCategory? selectedCategory;
+  final void Function(String id) onTaskDeleted;
+  final void Function(String id) onTaskEdited;
 
-  const TasksScreen({super.key, required this.tasks, this.selectedCategory});
+  const TasksScreen({
+    super.key,
+    required this.tasks,
+    this.selectedCategory,
+    required this.onTaskDeleted,
+    required this.onTaskEdited,
+  });
 
-  @override
-  State<TasksScreen> createState() => _TasksScreenState();
-}
-
-class _TasksScreenState extends State<TasksScreen> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final filteredTasks =
-        widget.selectedCategory == null || widget.selectedCategory!.id == 'all'
-            ? widget.tasks
-            : widget.tasks
-                .where((task) => task.categoryId == widget.selectedCategory!.id)
+        selectedCategory == null || selectedCategory!.id == 'all'
+            ? tasks
+            : tasks
+                .where((task) => task.categoryId == selectedCategory!.id)
                 .toList();
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8, right: 8, bottom: 30),
-        child: Column(
-          children: filteredTasks.map((task) => TaskCard(task: task)).toList(),
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 30),
+      child: ListView.builder(
+        itemCount: filteredTasks.length,
+        itemBuilder: (ctx, index) {
+          final task = filteredTasks[index];
+          return Slidable(
+            endActionPane: ActionPane(
+              extentRatio: 0.4,
+              motion: DrawerMotion(),
+              children: [
+                SlidableAction(
+                  onPressed: (ctx) => onTaskDeleted(task.id),
+                  icon: Icons.delete,
+                  backgroundColor: theme.colorScheme.error.withAlpha(220),
+                  label: 'Delete',
+                  padding: EdgeInsets.zero,
+                ),
+                SlidableAction(
+                  onPressed: (ctx) => onTaskEdited(task.id),
+                  icon: Icons.edit,
+                  backgroundColor: theme.colorScheme.secondary.withAlpha(220),
+                  label: 'Edit',
+                  padding: EdgeInsets.zero,
+                ),
+              ],
+            ),
+            child: TaskCard(task: task),
+          );
+        },
       ),
     );
   }

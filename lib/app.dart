@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:home_work_1/models/task_category.dart';
 import 'package:home_work_1/screens/tasks_screen.dart';
-import 'package:home_work_1/widgets/new_task.dart';
+import 'package:home_work_1/widgets/task_form.dart';
 
 import 'data/categories_data.dart';
 import 'models/task.dart';
@@ -18,7 +18,8 @@ class _AppState extends State<App> {
     Task(
         title: 'Task example #1',
         isDone: false,
-        description: 'task description',
+        description:
+            '- Сначала идут задачи с дедлайном. В конце - задачи без дедлайнов в алфавитном порядке',
         dateTime: DateTime.now(),
         categoryId: 'work'),
     Task(
@@ -39,6 +40,24 @@ class _AppState extends State<App> {
         description: 'task description',
         dateTime: DateTime.now(),
         categoryId: 'event'),
+    Task(
+        title: 'B Task example #5',
+        isDone: false,
+        description: 'task description',
+        dateTime: null,
+        categoryId: 'event'),
+    Task(
+        title: 'C Task example #6',
+        isDone: false,
+        description: 'task description',
+        dateTime: null,
+        categoryId: 'event'),
+    Task(
+        title: 'A Task example #7',
+        isDone: false,
+        description: 'task description',
+        dateTime: null,
+        categoryId: 'event'),
   ];
 
   void addTask(Task newTask) {
@@ -52,8 +71,28 @@ class _AppState extends State<App> {
       isScrollControlled: true,
       useSafeArea: true,
       context: context,
-      builder: (ctx) => NewTask(
-        onTaskCreated: addTask,
+      builder: (ctx) => TaskForm(
+        onTaskSaved: addTask,
+      ),
+    );
+  }
+
+  void editTask(Task editedTask) {
+    setState(() {
+      final index = tasks.indexWhere((task) => task.id == editedTask.id);
+      tasks[index] = editedTask;
+    });
+  }
+
+  void openEditTaskSheet(String id) {
+    final existingTask = tasks.firstWhere((task) => task.id == id);
+    showModalBottomSheet(
+      isScrollControlled: true,
+      useSafeArea: true,
+      context: context,
+      builder: (ctx) => TaskForm(
+        onTaskSaved: editTask,
+        existingTask: existingTask,
       ),
     );
   }
@@ -83,10 +122,28 @@ class _AppState extends State<App> {
     });
   }
 
+  void deleteTask(String id) {
+    setState(() {
+      tasks.removeWhere((task) => task.id == id);
+    });
+  }
+
   TaskCategory? _selectedCategory;
 
   @override
   Widget build(BuildContext context) {
+    tasks.sort((a, b) {
+      if (a.dateTime != null && b.dateTime == null) {
+        return -1;
+      } else if (a.dateTime == null && b.dateTime != null) {
+        return 1;
+      } else if (a.dateTime != null && b.dateTime != null) {
+        return a.dateTime!.compareTo(b.dateTime!);
+      } else {
+        return a.title.compareTo(b.title);
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Tasks'),
@@ -104,7 +161,11 @@ class _AppState extends State<App> {
           IconButton(onPressed: openAddTaskSheet, icon: Icon(Icons.add))
         ],
       ),
-      body: TasksScreen(tasks: tasks, selectedCategory: _selectedCategory),
+      body: TasksScreen(
+          tasks: tasks,
+          selectedCategory: _selectedCategory,
+          onTaskDeleted: deleteTask,
+          onTaskEdited: openEditTaskSheet),
     );
   }
 }

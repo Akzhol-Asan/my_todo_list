@@ -21,7 +21,11 @@ class _TaskCardState extends State<TaskCard> {
       isDone = !isDone;
       if (isDone) {
         doneTime = formatDateTime(DateTime.now());
-        deadlineIsFailed = DateTime.now().isAfter(widget.task.dateTime);
+        if (widget.task.dateTime != null) {
+          deadlineIsFailed = DateTime.now().isAfter(widget.task.dateTime!);
+        } else {
+          deadlineIsFailed = false;
+        }
       } else {
         doneTime = null;
         deadlineIsFailed = false;
@@ -42,30 +46,54 @@ class _TaskCardState extends State<TaskCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //Task title
-              Text(
-                widget.task.title,
-                style: theme.textTheme.bodyLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  decoration:
-                      isDone ? TextDecoration.lineThrough : TextDecoration.none,
-                  color: isDone ? Colors.grey : Colors.black,
-                ),
+              //Task title, description & Check Box button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.task.title,
+                          style: theme.textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            decoration: isDone
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                            color: isDone ? Colors.grey : Colors.black,
+                          ),
+                        ),
+                        Text(
+                          widget.task.description,
+                          style: theme.textTheme.bodyMedium!.copyWith(
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: taskIsDone,
+                    icon: Icon(
+                      isDone ? Icons.check_box : Icons.check_box_outline_blank,
+                      color: isDone ? Colors.green : Colors.blue,
+                    ),
+                  ),
+                ],
               ),
               //Task description
-              Text(
-                widget.task.description,
-                style: theme.textTheme.bodyMedium!.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
-              ),
               SizedBox(height: 4),
-              //Deadline
+              // Deadline
               Text(
-                'Deadline: ${formatDateTime(widget.task.dateTime)}',
+                widget.task.dateTime != null
+                    ? 'Deadline: ${formatDateTime(widget.task.dateTime!)}'
+                    : 'No deadline set',
                 style:
                     titleSmallStyle.copyWith(color: theme.colorScheme.tertiary),
               ),
+
               //DoneTime
               Text(
                 isDone ? 'Done time: $doneTime' : 'In Progress...',
@@ -101,40 +129,6 @@ class _TaskCardState extends State<TaskCard> {
                           style: titleSmallStyle.copyWith(color: Colors.white))
                     ],
                   )),
-              SizedBox(height: 8),
-              //Done & Delete buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade800,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5))),
-                      onPressed: taskIsDone,
-                      child: Text('Done',
-                          style: theme.textTheme.bodyMedium!.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.error,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5))),
-                      onPressed: () {},
-                      child: Text('Delete',
-                          style: theme.textTheme.bodyMedium!.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ],
-              )
             ],
           ),
         ),

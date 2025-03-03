@@ -3,31 +3,47 @@ import 'package:home_work_1/data/categories_data.dart';
 import 'package:home_work_1/helpers/format_datetime.dart';
 import 'package:home_work_1/models/task.dart';
 
-class NewTask extends StatefulWidget {
-  final void Function(Task newTask) onTaskCreated;
-
-  const NewTask({
+class TaskForm extends StatefulWidget {
+  final void Function(Task newTask) onTaskSaved;
+  final Task? existingTask;
+  const TaskForm({
     super.key,
-    required this.onTaskCreated,
+    required this.onTaskSaved,
+    this.existingTask,
   });
-
   @override
-  State<NewTask> createState() => _NewTaskState();
+  State<TaskForm> createState() => _TaskFormState();
 }
 
-class _NewTaskState extends State<NewTask> {
-  var title = '';
-  var description = '';
+class _TaskFormState extends State<TaskForm> {
   var selectedDate = DateTime.now();
   var selectedTimeOfDay = TimeOfDay.now();
   String? selectedCategory;
-
   final dateController = TextEditingController();
   final timeController = TextEditingController();
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  bool isDeadlineRemoved = false;
 
   @override
   void initState() {
     super.initState();
+    if (widget.existingTask != null) {
+      final existingTask = widget.existingTask!;
+      titleController.text = existingTask.title;
+      descriptionController.text = existingTask.description;
+      selectedCategory = existingTask.categoryId;
+      if (existingTask.dateTime != null) {
+        selectedDate = existingTask.dateTime!;
+        selectedTimeOfDay = TimeOfDay.fromDateTime(selectedDate);
+      } else {
+        selectedDate = DateTime.now();
+        selectedTimeOfDay = TimeOfDay.now();
+      }
+    } else {
+      selectedDate = DateTime.now();
+      selectedTimeOfDay = TimeOfDay.now();
+    }
     dateController.text = formatDate(selectedDate);
     timeController.text = formatTime(selectedTimeOfDay);
   }
@@ -36,6 +52,8 @@ class _NewTaskState extends State<NewTask> {
   void dispose() {
     dateController.dispose();
     timeController.dispose();
+    titleController.dispose();
+    descriptionController.dispose();
     super.dispose();
   }
 
@@ -47,35 +65,40 @@ class _NewTaskState extends State<NewTask> {
     if (isTaskInvalid()) {
       return;
     }
-    final dateTime = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTimeOfDay.hour,
-      selectedTimeOfDay.minute,
-    );
+
+    DateTime? dateTime;
+    if (!isDeadlineRemoved) {
+      dateTime = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        selectedTimeOfDay.hour,
+        selectedTimeOfDay.minute,
+      );
+    }
+
     final newTask = Task(
-      title: title.trim(),
-      description: description.trim(),
+      id: widget.existingTask?.id,
+      title: titleController.text.trim(),
+      description: descriptionController.text.trim(),
       isDone: false,
       dateTime: dateTime,
       categoryId: selectedCategory!,
     );
-    widget.onTaskCreated(newTask);
+
+    widget.onTaskSaved(newTask);
     Navigator.pop(context);
   }
 
   void onDateTap() async {
     final now = DateTime.now();
     final lastDate = DateTime(now.year + 1);
-
     final dateFromUser = await showDatePicker(
       context: context,
       firstDate: now,
       lastDate: lastDate,
       initialDate: selectedDate,
     );
-
     if (dateFromUser != null) {
       setState(() {
         selectedDate = dateFromUser;
@@ -94,16 +117,25 @@ class _NewTaskState extends State<NewTask> {
   }
 
   bool isTaskInvalid() {
-    return title.trim().isEmpty ||
-        description.trim().isEmpty ||
+    return titleController.text.trim().isEmpty ||
+        descriptionController.text.trim().isEmpty ||
         selectedCategory == null;
+  }
+
+  void onRemoveDeadline() {
+    setState(() {
+      isDeadlineRemoved = true;
+      selectedDate = DateTime.now();
+      selectedTimeOfDay = TimeOfDay.now();
+      dateController.text = '';
+      timeController.text = '';
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(16, 16, 16, bottomInset + 16),
       child: Column(
@@ -111,18 +143,40 @@ class _NewTaskState extends State<NewTask> {
           //Task title
           SizedBox(
               child: TextField(
-            onChanged: (value) => setState(() => title = value),
+            controller: titleController,
             decoration: InputDecoration(label: Text('Task')),
           )),
           SizedBox(width: 8),
-          //Task description
+          //Description
           SizedBox(
               child: TextField(
-            onChanged: (value) => setState(() => description = value),
+            controller: descriptionController,
             decoration: InputDecoration(label: Text('Description')),
           )),
-          SizedBox(height: 10),
-          //Deadline Date & time
+          SizedBox(height: 8),
+          //Categories
+          DropdownMenu(
+            expandedInsets: EdgeInsets.zero,
+            label: Text('Category'),
+            inputDecorationTheme: theme.inputDecorationTheme,
+            initialSelection: selectedCategory,
+            onSelected: (value) => setState(() => selectedCategory = value),
+            dropdownMenuEntries: categories
+                .map(
+                  (category) => DropdownMenuEntry(
+                    value: category.id,
+                    leadingIcon: Icon(category.icon, color: category.iconColor),
+                    label: category.title,
+                    labelWidget: Text(
+                      ' ${category.title}',
+                      style: TextStyle(color: category.iconColor),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          SizedBox(height: 16),
+          //Deadline date & time
           Row(
             children: [
               Expanded(
@@ -149,26 +203,15 @@ class _NewTaskState extends State<NewTask> {
             ],
           ),
           SizedBox(height: 16),
-          //Categories
-          DropdownMenu(
-            expandedInsets: EdgeInsets.zero,
-            label: Text('Category'),
-            inputDecorationTheme: theme.inputDecorationTheme,
-            onSelected: (value) => setState(() => selectedCategory = value),
-            dropdownMenuEntries: categories
-                .map(
-                  (category) => DropdownMenuEntry(
-                    value: category.id,
-                    leadingIcon: Icon(category.icon, color: category.iconColor),
-                    label: category.title,
-                    labelWidget: Text(
-                      ' ${category.title}',
-                      style: TextStyle(color: category.iconColor),
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
+          //Remove deadline button
+          SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5))),
+                  onPressed: onRemoveDeadline,
+                  child: Text('Remove Deadline'))),
           SizedBox(height: 22),
           //Cancel & Save buttons
           Row(
@@ -179,6 +222,9 @@ class _NewTaskState extends State<NewTask> {
               SizedBox(width: 8),
               Expanded(
                   child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5))),
                       onPressed: isTaskInvalid() ? null : onSaved,
                       child: Text('Save'))),
             ],
