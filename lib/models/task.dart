@@ -11,15 +11,17 @@ class Task {
   final bool isDone;
   final DateTime? dateTime;
   final String categoryId;
+  final DateTime? doneDate;
 
-  Task({
-    String? id,
-    required this.title,
-    required this.description,
-    required this.isDone,
-    this.dateTime,
-    required this.categoryId,
-  }) : id = id ?? uuid.v4();
+  Task(
+      {String? id,
+      required this.title,
+      required this.description,
+      required this.isDone,
+      this.dateTime,
+      required this.categoryId,
+      this.doneDate})
+      : id = id ?? uuid.v4();
 
   TaskCategory get category {
     return categories.firstWhere((category) => category.id == categoryId);

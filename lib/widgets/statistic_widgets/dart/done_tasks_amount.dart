@@ -17,7 +17,7 @@ class DoneTasksAmount extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Done Tasks amount'),
+          Text('Done Tasks'),
           Text('$doneTasksAmount'),
         ],
       ),
