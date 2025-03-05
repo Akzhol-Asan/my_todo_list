@@ -3,6 +3,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:home_work_1/models/task_category.dart';
 import 'package:home_work_1/widgets/task_card.dart';
 import '../models/task.dart';
+import '../theme/colors.dart';
 
 class TasksScreen extends StatelessWidget {
   final List<Task> tasks;
@@ -27,6 +28,7 @@ class TasksScreen extends StatelessWidget {
             : tasks
                 .where((task) => task.categoryId == selectedCategory!.id)
                 .toList();
+    final customColors = theme.extension<CustomColors>()!;
 
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8),
@@ -42,7 +44,7 @@ class TasksScreen extends StatelessWidget {
                 SlidableAction(
                   onPressed: (ctx) => onTaskDeleted(task.id),
                   icon: Icons.delete,
-                  backgroundColor: theme.colorScheme.error.withAlpha(220),
+                  backgroundColor: customColors.deadlineMissed,
                   label: 'Delete',
                   padding: EdgeInsets.zero,
                 ),
