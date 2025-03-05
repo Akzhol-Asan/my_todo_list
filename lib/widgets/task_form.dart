@@ -210,7 +210,7 @@ class _TaskFormState extends State<TaskForm> {
                   style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5))),
-                  onPressed: onRemoveDeadline,
+                  onPressed: isDeadlineRemoved ? null : onRemoveDeadline,
                   child: Text('Remove Deadline'))),
           SizedBox(height: 22),
           //Cancel & Save buttons

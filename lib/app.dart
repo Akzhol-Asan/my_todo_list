@@ -148,12 +148,12 @@ class _AppState extends State<App> {
         appBarActions: [
           Text(
             _selectedCategory != null ? _selectedCategory!.title : '',
-            style: TextStyle(color: Colors.blue),
           ),
           IconButton(
             onPressed: openFilter,
             icon: Icon(Icons.filter_list,
-                color: _selectedCategory != null ? Colors.blue : Colors.black),
+                color:
+                    _selectedCategory != null ? Colors.white : Colors.white70),
           ),
           IconButton(
             onPressed: openAddTaskSheet,
@@ -205,7 +205,10 @@ class _AppState extends State<App> {
         destinations: destinations
             .map((destination) => NavigationDestination(
                 icon: Icon(destination.navIcon),
-                selectedIcon: Icon(destination.navSelectedIcon),
+                selectedIcon: Icon(
+                  destination.navSelectedIcon,
+                  color: Colors.white,
+                ),
                 label: destination.navLabel))
             .toList(),
       ),
