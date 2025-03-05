@@ -4,6 +4,8 @@ import 'package:home_work_1/widgets/category_display.dart';
 import 'package:home_work_1/widgets/statistics/statistics_card.dart';
 import 'package:home_work_1/models/task.dart';
 
+import '../../../theme/colors.dart';
+
 class CategoriesSummary extends StatelessWidget {
   final List<Task> tasks;
 
@@ -11,8 +13,12 @@ class CategoriesSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<CustomColors>()!;
+
     return StatisticsCard(
-      color: Colors.orange.shade200,
+      // color: Colors.orange.shade200,
+      borderColor: customColors.staticCardBorderTypeTwo,
       child: ListView.separated(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
@@ -27,12 +33,11 @@ class CategoriesSummary extends StatelessWidget {
             children: [
               CategoryDisplay(
                 category: categories[index],
-                iconColor: Colors.black87,
-                textColor: Colors.black87,
+                iconColor: customColors.taskTitle,
+                textColor: customColors.taskTitle,
               ),
               Text(
                 '${categoryTasks.length}',
-                style: TextStyle(color: Colors.black87),
               ),
             ],
           );

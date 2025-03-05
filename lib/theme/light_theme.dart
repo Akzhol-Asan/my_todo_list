@@ -12,6 +12,10 @@ final lightCustomColors = CustomColors(
   taskTitle: Colors.black,
   taskDescription: Colors.black87,
   deadlineInProgress: Colors.grey,
+  staticCardBackground: Colors.white,
+  staticCardBorderTypeOne: Colors.greenAccent,
+  staticCardBorderTypeTwo: Colors.lightBlueAccent,
+  deadlineMissed: Colors.red.shade700,
 );
 
 final lightTheme = ThemeData.light().copyWith(

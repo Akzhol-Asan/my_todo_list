@@ -29,7 +29,7 @@ class TasksChart extends StatelessWidget {
     }
 
     return StatisticsCard(
-      color: Colors.black54,
+      // color: Colors.black54,
       child: SizedBox(
         height: 220,
         child: ClipRRect(

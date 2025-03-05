@@ -106,12 +106,13 @@ class _TaskCardState extends State<TaskCard> {
                 style: titleSmallStyle.copyWith(
                     color: isDone
                         ? (deadlineIsFailed
-                            ? theme.colorScheme.error
+                            ? customColors.deadlineMissed
                             : Colors.green.shade800)
-                        : theme.colorScheme.tertiary,
+                        : customColors.deadlineInProgress,
                     decoration: deadlineIsFailed
                         ? TextDecoration.underline
-                        : TextDecoration.none),
+                        : TextDecoration.none,
+                    decorationColor: customColors.deadlineMissed),
               ),
               SizedBox(height: 10),
               //Task category

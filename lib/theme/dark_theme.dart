@@ -10,6 +10,10 @@ final darkCustomColors = CustomColors(
   taskTitle: Colors.white,
   taskDescription: Colors.blue,
   deadlineInProgress: Colors.grey,
+  staticCardBackground: Colors.black26,
+  staticCardBorderTypeOne: Colors.green.shade400,
+  staticCardBorderTypeTwo: Colors.blue.shade400,
+  deadlineMissed: Colors.red,
 );
 
 final darkTheme = ThemeData.dark().copyWith(

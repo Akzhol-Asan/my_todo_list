@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:home_work_1/widgets/statistics/statistics_card.dart';
 
 import '../../../models/task.dart';
+import '../../../theme/colors.dart';
 
 class TotalTasksAmount extends StatelessWidget {
   final List<Task> tasks;
@@ -9,9 +10,12 @@ class TotalTasksAmount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<CustomColors>()!;
     return StatisticsCard(
-        color: Colors.blue.shade200,
+        // color: Colors.blue.shade200,
+        borderColor: customColors.staticCardBorderTypeTwo,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -6,7 +6,7 @@ final categories = [
       id: 'work',
       title: 'Work',
       icon: Icons.factory_outlined,
-      iconColor: Colors.grey.shade800),
+      iconColor: Colors.green.shade700),
   TaskCategory(
       id: 'personal',
       title: 'Personal',
@@ -21,7 +21,7 @@ final categories = [
       id: 'event',
       title: 'Event',
       icon: Icons.celebration_outlined,
-      iconColor: Colors.purple.shade700),
+      iconColor: Colors.purple.shade300),
 ];
 
 final allCategories = [
@@ -34,7 +34,7 @@ final allCategories = [
       id: 'work',
       title: 'Work',
       icon: Icons.factory_outlined,
-      iconColor: Colors.grey.shade800),
+      iconColor: Colors.green.shade700),
   TaskCategory(
       id: 'personal',
       title: 'Personal',

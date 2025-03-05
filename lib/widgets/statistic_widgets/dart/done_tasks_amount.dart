@@ -13,7 +13,7 @@ class DoneTasksAmount extends StatelessWidget {
     final doneTasksAmount = tasks.where((task) => task.isDone).length;
 
     return StatisticsCard(
-      color: Colors.purple.shade200,
+      // color: Colors.purple.shade200,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
