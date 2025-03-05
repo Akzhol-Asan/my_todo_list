@@ -1,0 +1,2 @@
+/Users/akzholasan/Desktop/my_todo_list_test/android/app/.cxx/Debug/hf2g682e/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/akzholasan/Desktop/my_todo_list_test/android/app/.cxx/Debug/hf2g682e/armeabi-v7a/CMakeFiles/rebuild_cache.dir

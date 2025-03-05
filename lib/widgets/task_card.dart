@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:home_work_1/helpers/format_datetime.dart';
+import 'package:home_work_1/theme/colors.dart';
 import '../models/task.dart';
 import 'category_display.dart';
 
@@ -42,6 +43,7 @@ class _TaskCardState extends State<TaskCard> {
     final theme = Theme.of(context);
     final titleSmallStyle = theme.textTheme.titleSmall!;
     final category = widget.task.category;
+    final customColors = theme.extension<CustomColors>()!;
 
     return SizedBox(
       width: double.infinity,
@@ -67,13 +69,14 @@ class _TaskCardState extends State<TaskCard> {
                             decoration: isDone
                                 ? TextDecoration.lineThrough
                                 : TextDecoration.none,
-                            color: isDone ? Colors.grey : Colors.black,
+                            color:
+                                isDone ? Colors.grey : customColors.taskTitle,
                           ),
                         ),
                         Text(
                           widget.task.description,
                           style: theme.textTheme.bodyMedium!.copyWith(
-                            color: theme.colorScheme.primary,
+                            color: customColors.taskDescription,
                           ),
                         ),
                       ],
@@ -94,8 +97,8 @@ class _TaskCardState extends State<TaskCard> {
                 widget.task.dateTime != null
                     ? 'Deadline: ${formatDateTime(widget.task.dateTime!)}'
                     : 'No deadline set',
-                style:
-                    titleSmallStyle.copyWith(color: theme.colorScheme.tertiary),
+                style: titleSmallStyle.copyWith(
+                    color: customColors.deadlineInProgress),
               ),
               //DoneTime
               Text(
